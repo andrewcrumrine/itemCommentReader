@@ -1,8 +1,8 @@
 """
 	commentFileReader.py
 
-	File Reader Module
-	------------------
+	File Reader Module for Comment File
+	-----------------------------------
 
 	This module manages reading the text files outputted from the AS400.  You can 
 	read the files, filter lines of text that are not prefferred, and pass the
@@ -11,6 +11,9 @@
 """
 
 import stringMan as s
+
+HEADER_KEY_START = 'Item     '#' */**/15'
+HEADER_KEY_STOP = 'Comments 20\n'#'------'
 
 class TxtFileReader():
 	"""
@@ -45,7 +48,7 @@ class TxtFileReader():
 	This method creates a new TxtBuffer object.  It tells the program when
 	There is no more text to be read.
 		"""
-		self.buffer = TxtBuffer(self.fid)
+		self.buffer = TxtBuffer(self.fid,HEADER_KEY_START,HEADER_KEY_STOP)
 		self.__setReading()
 		self.__updateHeader()
 		if self.buffer.returnLine and self.header == False:
@@ -79,13 +82,13 @@ class TxtBuffer():
 	lines and blank lines.
 	"""
 
-	def __init__(self,fid):
+	def __init__(self,fid,keyStart,keyStop):
 		"""
 	This initializes instance variables such as keys, the size of the 
 	string and the content read from the TxtFileReader() object
 		"""
-		self.HEADER_KEY_START = ' */**/15'
-		self.HEADER_KEY_STOP = '------'
+		self.HEADER_KEY_START = keyStart
+		self.HEADER_KEY_STOP = keyStop
 		self.TOTAL_KEY_1 = '*\r\r\n'
 		self.TOTAL_KEY_2 = '*\r\n'
 		self.TOTAL_KEY_3 = '*\n'
@@ -117,7 +120,8 @@ class TxtBuffer():
 		if self.__isSpecialLine(self.HEADER_KEY_START,0,'*') :
 			self.header = True
 			return True
-		if self.__isSpecialLine(self.HEADER_KEY_STOP,0) :
+		if self.__isSpecialLine(self.HEADER_KEY_STOP,\
+			len(self.text) - len(self.HEADER_KEY_STOP)) :
 			self.header = False
 			return True
 		return False
