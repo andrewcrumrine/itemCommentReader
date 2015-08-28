@@ -104,3 +104,5 @@ class CSVCreator(object):
 			return self.text[key1:key1]
 		else:
 			return textIn[key1:key2]
+
+class CommentCreator()
