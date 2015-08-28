@@ -1,8 +1,8 @@
 """
-	commentFileReader.py
+	fileReader.py
 
-	File Reader Module for Comment File
-	-----------------------------------
+	File Reader Module
+	------------------
 
 	This module manages reading the text files outputted from the AS400.  You can 
 	read the files, filter lines of text that are not prefferred, and pass the
@@ -12,24 +12,22 @@
 
 import stringMan as s
 
-HEADER_KEY_START = 'Item     '#' */**/15'
-HEADER_KEY_STOP = 'Comments 20\n'#'------'
-
 class TxtFileReader():
 	"""
 	This object manages opening the incoming text file, creating a TxtBuffer
 	object, destroying it and moving on to the next line.  The object also
 	manages when the read text is in the header.
 	"""
-	def __init__(self, filenameIn):
+	def __init__(self, filenameIn, *headers):
 		"""
 	This initializes the TxtFileReader object.  It stops the program if a
 	file cannot be opened.
 		"""
-		self.header = True
+		self.header = False
 		self.reading = True
 		self.buffer = None
 		self.fid = None
+		self.headers = headers
 		try:
 			self.fid = open(filenameIn,'r')
 		except IOError:
@@ -48,7 +46,7 @@ class TxtFileReader():
 	This method creates a new TxtBuffer object.  It tells the program when
 	There is no more text to be read.
 		"""
-		self.buffer = TxtBuffer(self.fid,HEADER_KEY_START,HEADER_KEY_STOP)
+		self.buffer = TxtBuffer(self.fid,self.headers[0],self.headers[1])
 		self.__setReading()
 		self.__updateHeader()
 		if self.buffer.returnLine and self.header == False:
@@ -81,13 +79,13 @@ class TxtBuffer():
 	lines and blank lines.
 	"""
 
-	def __init__(self,fid,keyStart,keyStop):
+	def __init__(self,fid,*headers):
 		"""
 	This initializes instance variables such as keys, the size of the 
 	string and the content read from the TxtFileReader() object
 		"""
-		self.HEADER_KEY_START = keyStart
-		self.HEADER_KEY_STOP = keyStop
+		self.HEADER_KEY_START = headers[0]
+		self.HEADER_KEY_STOP = headers[1]
 		self.TOTAL_KEY_1 = '*\r\r\n'
 		self.TOTAL_KEY_2 = '*\r\n'
 		self.TOTAL_KEY_3 = '*\n'
@@ -144,13 +142,13 @@ class TxtBuffer():
 			return True
 		return False
 
-	def getText(self):
+	def getText(self,clip = 2):
 		"""
 	This method returns the instance text variable.  It's called if the text
 	passes all of the tests.  It intentionally removes the last two characters
 	to prevent extra new line characters from being passed to the csv.
 		"""
-		return self.text[:-2]
+		return self.text[:-clip]
 
 class MapReader(object):
 	def __init__(self,fileIn):
