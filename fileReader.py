@@ -92,14 +92,18 @@ class TxtBuffer():
 		self.text = fid.readline()
 		self.size = len(self.text)
 		self.header = None
+		self.ignoreTotal = False
 		self.returnLine = self.__checkReturnLine()
 
 	def __checkReturnLine(self):
 		"""
 	This method screens the string output for undesirable strings
 		"""
-		if self.__isHeader() or self.__isBlankLine() or self.__isTotalLine():
+		if self.__isHeader() or self.__isBlankLine():
 			return False
+		if self.ignoreTotal:
+			if self.__isTotalLine():
+				return False
 		return True
 
 	def __isBlankLine(self):
