@@ -39,3 +39,5 @@ class CommentCreator(csv.CSVCreator):
 	Set the item map ivar using the MapReader function
 		"""
 		self.itemMap = f.MapReader(fileIn).getMap()
+
+	

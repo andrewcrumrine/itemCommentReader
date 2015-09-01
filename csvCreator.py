@@ -110,6 +110,7 @@ class CSVCreator(object):
 		"""
 		self.header = listIn
 
+
 	def setIndices(self,dictIn):
 		"""
 	Set indices variable
@@ -117,3 +118,31 @@ class CSVCreator(object):
 	Dictionary in defines how each line of text will be spliced.
 		"""
 		self.indices = dictIn
+
+
+	def writeToCSV(self,textIn):
+		"""
+	This method accepts an incoming string and wraps around the setText
+	and setEntry method.  It passes the incoming string to the setText method.		
+		"""
+		self._setText(textIn)
+		self._setEntry()
+
+
+	def _setText(self,textIn):
+		"""
+	This method sets the text variable to the value passed to it by the
+	writeToCSV method
+		"""
+		self.text = textIn
+
+	def _setEntry(self):
+		"""
+	This is method manages the data written to the csv file.  It saves the
+	customer and item data to be used on other entries
+		"""
+		for ind, field in enumerate(self.header):
+			self._setField(field)
+			if ind != len(self.header) - 1:
+				self._nextField()
+		self._nextEntry()
