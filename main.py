@@ -19,7 +19,7 @@ PATH = 'ItemBuildInstructions'
 
 def main():
 	files = m.FileList(PATH)
-	print files.files
+	print(files.files)
 
 	x = []
 

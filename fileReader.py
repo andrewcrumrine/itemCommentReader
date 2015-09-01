@@ -31,7 +31,10 @@ class TxtFileReader():
 		try:
 			self.fid = open(filenameIn,'r')
 		except IOError:
-			print filenameIn + " does not exist in this directory."
+			print(filenameIn + " does not exist in this directory.")
+			raise SystemExit
+		if self.fid.encoding != 'UTF-8':
+			print(filenameIn + " not encoded properly.")
 			raise SystemExit
 
 	def __del__(self):
