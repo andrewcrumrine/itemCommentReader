@@ -24,10 +24,24 @@ class CommentFileReader(f.TxtFileReader):
 		"""
 		HEAD_START = 'Item'
 		HEAD_STOP = 'Number\n'
-		f.TxtFileReader.__init__(self,filenameIn,HEAD_START,HEAD_STOP)
+		self.headerKey = ['Item','Number\n']
+		f.TxtFileReader.__init__(self,filenameIn)
 
 	def __del__(self):
 		"""
 	Closes the open file stream
 		"""
 		f.TxtFileReader.__del__(self)
+
+class CommentBuffer(f.TxtBuffer):
+	"""
+	This class extends the TxtBuffer class.  Used to read comment
+	files and remove unwanted lines.
+	"""
+	def __init__(self,fid,beginning,key):
+		"""
+	Initializes the Comment Buffer class.  Sometimes the special line
+	needs to be searched at the beginning, sometimes at the end.  It
+	will always need a key.
+		"""
+		f.TxtBuffer.__init__(self,fid,beginning,key)
