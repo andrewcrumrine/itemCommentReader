@@ -168,7 +168,11 @@ class MapReader(object):
 			self.fid.close()
 
 	def _openFile(self):
-		self.fid = open(self.fileName,'r')
+		try:
+			self.fid = open(self.fileName,'r')
+		except IOError:
+			print('Cannot find ' + self.fileName + ' in directory.')
+			raise SystemExit
 
 	def getMap(self):
 		mapOut = {}

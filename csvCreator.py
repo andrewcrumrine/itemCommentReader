@@ -16,7 +16,7 @@ class CSVCreator(object):
 	fields inputed from the AS400
 	"""
 
-	def __init__(self,filenameIn):
+	def __init__(self,filenameIn=None):
 		"""
 	This initializes the CSVCreator object.
 		"""
