@@ -18,12 +18,11 @@ class TxtFileReader(object):
 	object, destroying it and moving on to the next line.  The object also
 	manages when the read text is in the header.
 	"""
-	def __init__(self, filenameIn, *headers):
+	def __init__(self, filenameIn,*headers):
 		"""
 	This initializes the TxtFileReader object.  It stops the program if a
 	file cannot be opened.
 		"""
-		self.header = False
 		self.reading = True
 		self.buffer = None
 		self.fid = None
@@ -47,25 +46,25 @@ class TxtFileReader(object):
 	This method creates a new TxtBuffer object.  It tells the program when
 	There is no more text to be read.
 		"""
-		self.buffer = TxtBuffer(self.fid,self.headers[0],self.headers[1])
-		self.__setReading()
-		self.__updateHeader()
-		if self.buffer.returnLine and self.header == False:
+		if len(self.headers) != 0:
+			self.buffer = TxtBuffer(self.fid,self.headers[0])
+		else:
+			self.buffer = TxtBuffer(self.fid)
+		self._setReading()
+		if self._isReturnLine():
 			return self.buffer
-		return None
+		else:
+			return None
 
-	def __updateHeader(self):
+	def _isReturnLine(self):
 		"""
-	This method manages the header instance variable based off of what's
-	passed from the TxtBuffer object.
+	Checks buffer to see if it's unwanted.
 		"""
-		if self.buffer.header != None:
-			if self.buffer.header and self.header == False:
-				self.header = True
-			if self.buffer.header == False and self.header == True:
-				self.header = False
+		if self.buffer.returnLine:
+			return True
+		return False
 
-	def __setReading(self):
+	def _setReading(self):
 		"""
 	This method sets the reading method to false if there are no more
 	lines of text read from the file.
@@ -80,65 +79,33 @@ class TxtBuffer(object):
 	lines and blank lines.
 	"""
 
-	def __init__(self,fid,*headers):
+	def __init__(self,fid,beginning=True,key=None):
 		"""
 	This initializes instance variables such as keys, the size of the 
 	string and the content read from the TxtFileReader() object
 		"""
-		self.HEADER_KEY_START = headers[0]
-		self.HEADER_KEY_STOP = headers[1]
-		self.TOTAL_KEY_1 = '*\r\r\n'
-		self.TOTAL_KEY_2 = '*\r\n'
-		self.TOTAL_KEY_3 = '*\n'
+		self.key = key
 		self.text = fid.readline()
 		self.size = len(self.text)
-		self.header = None
-		self.ignoreTotal = False
-		self.returnLine = self.__checkReturnLine()
+		if beginning:
+			self.pos = 0
+		else:
+			self.pos = self.size - len(self.key)
+		if key is None:
+			self.returnLine = True
+		else:
+			self.returnLine = self._checkReturnLine()
 
-	def __checkReturnLine(self):
+	def _checkReturnLine(self):
 		"""
 	This method screens the string output for undesirable strings
 		"""
-		if self.__isHeader() or self.__isBlankLine():
+		if self._isSpecialLine(self.key,self.pos):
 			return False
-		if self.ignoreTotal:
-			if self.__isTotalLine():
-				return False
 		return True
 
-	def __isBlankLine(self):
-		"""
-	This method checks the read screen for a blank line.
-		"""
-		if self.size < 10:
-			return True
-		return False
 
-	def __isHeader(self):
-		"""
-	This method checks the read line to see if it's a header.
-		"""
-		if self.__isSpecialLine(self.HEADER_KEY_START,0,'*') :
-			self.header = True
-			return True
-		if self.__isSpecialLine(self.HEADER_KEY_STOP,\
-			len(self.text) - len(self.HEADER_KEY_STOP)) :
-			self.header = False
-			return True
-		return False
-
-	def __isTotalLine(self):
-		"""
-	This method screens for any totals lines produced by the report.
-		"""
-		if self.__isSpecialLine(self.TOTAL_KEY_1,self.size - len(self.TOTAL_KEY_1)) \
-		or self.__isSpecialLine(self.TOTAL_KEY_2,self.size - len(self.TOTAL_KEY_2)) \
-		or self.__isSpecialLine(self.TOTAL_KEY_3,self.size - len(self.TOTAL_KEY_3)):
-			return True
-		return False
-
-	def __isSpecialLine(self,key,loc,wc=None):
+	def _isSpecialLine(self,key,loc,wc=None):
 		"""
 	This method is a general method that returns a boolean if the text you're
 	looking for is where you expect it to be.
@@ -147,13 +114,16 @@ class TxtBuffer(object):
 			return True
 		return False
 
-	def getText(self,clip = 2):
+	def getText(self,clip = 0):
 		"""
 	This method returns the instance text variable.  It's called if the text
 	passes all of the tests.  It intentionally removes the last two characters
 	to prevent extra new line characters from being passed to the csv.
 		"""
-		return self.text[:-clip]
+		if clip == 0:
+			return self.text
+		else:
+			return self.text[:-clip]
 
 class MapReader(object):
 	def __init__(self,fileIn):
