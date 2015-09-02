@@ -12,7 +12,7 @@
 
 import stringMan as s
 
-class TxtFileReader():
+class TxtFileReader(object):
 	"""
 	This object manages opening the incoming text file, creating a TxtBuffer
 	object, destroying it and moving on to the next line.  The object also
@@ -33,9 +33,7 @@ class TxtFileReader():
 		except IOError:
 			print(filenameIn + " does not exist in this directory.")
 			raise SystemExit
-		if self.fid.encoding != 'UTF-8':
-			print(filenameIn + " not encoded properly.")
-			raise SystemExit
+
 
 	def __del__(self):
 		"""
@@ -75,7 +73,7 @@ class TxtFileReader():
 		if self.buffer.text == '':
 			self.reading = False
 
-class TxtBuffer():
+class TxtBuffer(object):
 	"""
 	This class screens the string produced by the readline method
 	from the TxtFileReader class.  It checks for the header, the sum

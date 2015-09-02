@@ -24,9 +24,13 @@ class FileList():
 			return True
 		return False
 
-	def getNextFile(self):
-		return self.files.pop()
-
+	def getNextFile(self,descending=True):
+		if descending:
+			return self.files.pop()
+		else:
+			fileOut = self.files[0]
+			self.files.remove(self.files[0])
+			return fileOut
 	def isEmpty(self):
 		if len(self.files) == 0:
 			return True

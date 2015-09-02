@@ -8,7 +8,7 @@
 
 """
 
-import fileReader as f
+import commentReader as cR
 import manageFiles as m
 
 HEADER_KEY_START = 'Item       '
@@ -25,7 +25,7 @@ def main():
 
 	while not files.isEmpty():
 		out = []
-		inFile = f.TxtFileReader(files.getNextFile(),HEADER_KEY_START,HEADER_KEY_STOP)
+		inFile = cR.CommentFileReader(files.getNextFile(False))
 
 		while inFile.reading:
 			lineOut = inFile.getNextLine()
