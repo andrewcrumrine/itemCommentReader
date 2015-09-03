@@ -10,6 +10,7 @@
 
 import fileReader as f
 import csvCreator as csv
+import stringMan as s
 
 class CommentCreator(csv.CSVCreator):
 	"""
@@ -27,6 +28,7 @@ class CommentCreator(csv.CSVCreator):
 			'Comment 19', 'Comment 20']
 		self.indices = {'Item Name':[0,17],'Com 1':[17,72], 'Com 2':[72,127]}
 		self.itemMap = {}
+		self._createCSV()
 
 	def __del__(self):
 		"""
@@ -40,4 +42,35 @@ class CommentCreator(csv.CSVCreator):
 		"""
 		self.itemMap = f.MapReader(fileIn).getMap()
 
-	
+
+	def writeToCSV(self,textIn,index):
+		"""
+	Specific writeToCSV for comment builder
+		"""
+		self._setText(textIn)
+		self._setCommentEntry(index)
+
+	def _setCommentEntry(self,index):
+		"""
+	This method manages the data writen to the csv file.  It saves the
+	comment data to be used on other entries.
+		"""
+		for ind,rng in self.indices.iteritems():
+			if index == 0 and ind == 'Item Name':
+				self._setField(ind)
+				self._nextField()
+			elif ind == 'Com 1' or ind == 'Com 2':
+				self._setField(ind)
+				self._nextField()
+		if index == 9:
+			self._nextEntry()
+
+	def _setField(self,textIn,fid=None):
+		"""
+	Writes field to csv
+		"""
+		if fid is None:
+			fid = self.fid
+		textOut = self.iterText(textIn)
+		textOut = s.removeSpaces(textOut)
+		fid.write(textOut)

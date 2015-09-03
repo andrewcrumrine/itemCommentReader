@@ -10,30 +10,31 @@
 
 import commentReader as cR
 import manageFiles as m
+import commentBuilder as cB
 
 HEADER_KEY_START = 'Item       '
 HEADER_KEY_STOP = 'Number\n'
 
 PATH = 'ItemBuildInstructions'
+fileOut = 'itemComments.csv'
 
 
 def main():
+	csvOut = cB.CommentCreator(fileOut)
 	files = m.FileList(PATH)
 	print(files.files)
+	openfiles = []
 
-	x = []
-	y = []
+
 	while not files.isEmpty():
-		x.append(cR.CommentFileReader(files.getNextFile(False)))
+		openfiles.append(cR.CommentFileReader(files.getNextFile(False)))
 
-	while x[-1].reading:
-		out = []
-		for reader in x:
+	while openfiles[-1].reading:
+		for reader in openfiles:
 			lineOut = reader.getNextLine()
 			if lineOut is not None:
-				out.append(lineOut.getText())
-		y.append(out)
-	return y
+				csvOut.writeToCSV(lineOut.getText(),openfiles.index(reader))
+
 
 if __name__ == "__main__":
 	main()
