@@ -27,10 +27,12 @@ class CommentCreator(csv.CSVCreator):
 			'Comment 14', 'Comment 15', 'Comment 16', 'Comment 17', 'Comment 18',\
 			'Comment 19', 'Comment 20']
 		self.indices = {'Item Name':[0,17],'Com 1':[17,72], 'Com 2':[72,127]}
+		self.orderedInd = ['Item Name','Com 1','Com 2']
 		self.itemMap = {}
 		self.fileOut = filenameIn
 		self._createCSV()
 		self._createHeader()
+		self._setItemMap('itemMap.txt')
 
 	def __del__(self):
 		"""
@@ -45,31 +47,29 @@ class CommentCreator(csv.CSVCreator):
 		self.itemMap = f.MapReader(fileIn).getMap()
 
 
-	def writeToCSV(self,textIn,index):
+	def writeToCSV(self,textIn,index,length):
 		"""
 	Specific writeToCSV for comment builder
 		"""
 		self._setText(textIn)
-		#self._setCommentEntry(index)
-		self.testEntry()
+		if self._isItemInMap(self._getItem()):
+			self._setCommentEntry(index,length)
 
-	def _setCommentEntry(self,index):
+	def _setCommentEntry(self,index,length):
 		"""
 	This method manages the data writen to the csv file.  It saves the
 	comment data to be used on other entries.
 		"""
-		for ind,rng in self.indices.iteritems():
+
+		for ind in self.orderedInd:
 			if index == 0 and ind == 'Item Name':
 				self._setCommentField(ind)
 				self._nextField()
 			elif ind == 'Com 1' or ind == 'Com 2':
 				self._setCommentField(ind)
 				self._nextField()
-		if index == 9:
+		if index == length - 1:
 			self._nextEntry()
-
-	def testEntry(self):
-		self._setCommentField('Com1')
 
 	def _setCommentField(self,textIn,fid=None):
 		"""
@@ -80,3 +80,17 @@ class CommentCreator(csv.CSVCreator):
 		textOut = self.iterText(textIn)
 		textOut = s.removeSpaces(textOut)
 		fid.write(textOut)
+
+	def _getItem(self):
+		"""
+	Get item value from incoming text 
+		"""
+		item = self.iterText('Item Name')
+		item = s.removeSpaces(item)
+		return item
+
+	def _isItemInMap(self,itemIn):
+		"""
+	Check if item is in map
+		"""
+		return self.itemMap.has_key(itemIn)

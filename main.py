@@ -33,7 +33,7 @@ def main():
 		for reader in openfiles:
 			lineOut = reader.getNextLine()
 			if lineOut is not None:
-				csvOut.writeToCSV(lineOut.getText(),openfiles.index(reader))
+				csvOut.writeToCSV(lineOut.getText(1),openfiles.index(reader),len(openfiles))
 				pass
 
 if __name__ == "__main__":

@@ -95,7 +95,7 @@ class CSVCreator(object):
 			key1 = self.indices[keyIn][0]
 			key2 = self.indices[keyIn][1]
 			if textIn is None:
-				return self.text[key1:key1]
+				return self.text[key1:key2]
 			else:
 				return textIn[key1:key2]
 		except KeyError:
