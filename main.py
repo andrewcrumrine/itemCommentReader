@@ -34,7 +34,7 @@ def main():
 			lineOut = reader.getNextLine()
 			if lineOut is not None:
 				csvOut.writeToCSV(lineOut.getText(),openfiles.index(reader))
-
+				pass
 
 if __name__ == "__main__":
 	main()

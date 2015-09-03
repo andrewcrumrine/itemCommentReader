@@ -28,7 +28,9 @@ class CommentCreator(csv.CSVCreator):
 			'Comment 19', 'Comment 20']
 		self.indices = {'Item Name':[0,17],'Com 1':[17,72], 'Com 2':[72,127]}
 		self.itemMap = {}
+		self.fileOut = filenameIn
 		self._createCSV()
+		self._createHeader()
 
 	def __del__(self):
 		"""
@@ -48,7 +50,8 @@ class CommentCreator(csv.CSVCreator):
 	Specific writeToCSV for comment builder
 		"""
 		self._setText(textIn)
-		self._setCommentEntry(index)
+		#self._setCommentEntry(index)
+		self.testEntry()
 
 	def _setCommentEntry(self,index):
 		"""
@@ -57,15 +60,18 @@ class CommentCreator(csv.CSVCreator):
 		"""
 		for ind,rng in self.indices.iteritems():
 			if index == 0 and ind == 'Item Name':
-				self._setField(ind)
+				self._setCommentField(ind)
 				self._nextField()
 			elif ind == 'Com 1' or ind == 'Com 2':
-				self._setField(ind)
+				self._setCommentField(ind)
 				self._nextField()
 		if index == 9:
 			self._nextEntry()
 
-	def _setField(self,textIn,fid=None):
+	def testEntry(self):
+		self._setCommentField('Com1')
+
+	def _setCommentField(self,textIn,fid=None):
 		"""
 	Writes field to csv
 		"""
