@@ -22,17 +22,18 @@ def main():
 	print(files.files)
 
 	x = []
-
+	y = []
 	while not files.isEmpty():
-		out = []
-		inFile = cR.CommentFileReader(files.getNextFile(False))
+		x.append(cR.CommentFileReader(files.getNextFile(False)))
 
-		while inFile.reading:
-			lineOut = inFile.getNextLine()
+	while x[-1].reading:
+		out = []
+		for reader in x:
+			lineOut = reader.getNextLine()
 			if lineOut is not None:
 				out.append(lineOut.getText())
-		x.append(out)
-	return x
+		y.append(out)
+	return y
 
 if __name__ == "__main__":
 	main()

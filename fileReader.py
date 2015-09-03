@@ -104,6 +104,23 @@ class TxtBuffer(object):
 			return False
 		return True
 
+	def _setKey(self,key):
+		"""
+	Sets key variable
+		"""
+		self.key = key
+
+	def _setPosition(self,direction):
+		"""
+	This method sets position based off the direction desired
+		"""
+		if direction:
+			self.pos = 0
+		else:
+			self.pos = self.size - len(self.key)
+			if self.pos < 0:
+				self.pos = 0
+
 
 	def _isSpecialLine(self,key,loc,wc=None):
 		"""
