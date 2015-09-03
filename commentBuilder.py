@@ -21,7 +21,7 @@ class CommentCreator(csv.CSVCreator):
 	Initializes the comment creator object
 		"""
 		csv.CSVCreator.__init__(self,filenameIn)
-		self.header = ['Item Name','Comment 1','Comment 2','Comment 3',\
+		self.header = ['Item Name','NS ID','Comment 1','Comment 2','Comment 3',\
 			'Comment 4', 'Comment 5', 'Comment 6', 'Comment 7', 'Comment 8',\
 			'Comment 9', 'Comment 10', 'Comment 11', 'Comment 12', 'Comment 13',\
 			'Comment 14', 'Comment 15', 'Comment 16', 'Comment 17', 'Comment 18',\
@@ -33,6 +33,7 @@ class CommentCreator(csv.CSVCreator):
 		self._createCSV()
 		self._createHeader()
 		self._setItemMap('itemMap.txt')
+		self.item = None
 
 	def __del__(self):
 		"""
@@ -46,13 +47,20 @@ class CommentCreator(csv.CSVCreator):
 		"""
 		self.itemMap = f.MapReader(fileIn).getMap()
 
+	def _getNSID(self):
+		"""
+	Return the NS ID after checking the item Map
+		"""
+		return self.itemMap[self.item]
+
 
 	def writeToCSV(self,textIn,index,length):
 		"""
 	Specific writeToCSV for comment builder
 		"""
 		self._setText(textIn)
-		if self._isItemInMap(self._getItem()):
+		self.item = self._getItem()
+		if self._isItemInMap(self.item):
 			self._setCommentEntry(index,length)
 
 	def _setCommentEntry(self,index,length):
@@ -63,7 +71,9 @@ class CommentCreator(csv.CSVCreator):
 
 		for ind in self.orderedInd:
 			if index == 0 and ind == 'Item Name':
-				self._setCommentField(ind)
+				self._setAltField(self.item)
+				self._nextField()
+				self._setAltField(self._getNSID())
 				self._nextField()
 			elif ind == 'Com 1' or ind == 'Com 2':
 				self._setCommentField(ind)
@@ -79,7 +89,16 @@ class CommentCreator(csv.CSVCreator):
 			fid = self.fid
 		textOut = self.iterText(textIn)
 		textOut = s.removeSpaces(textOut)
+		textOut = s.removeCommas(textOut)
 		fid.write(textOut)
+
+	def _setAltField(self,textIn,fid=None):
+		"""
+	Writes to csv without using iterText.  Overrides the header key.
+		"""
+		if fid is None:
+			fid = self.fid
+		fid.write(textIn)
 
 	def _getItem(self):
 		"""
