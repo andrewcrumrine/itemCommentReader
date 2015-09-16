@@ -53,7 +53,8 @@ def wildSearch(stringIn, key, wildcard=None):
 		return stringIn.find(key)
 
 	try:
-		index = stringIn.find(key[0])
+		if key[0] != wildcard[0]:
+			index = stringIn.find(key[0])
 	except IndexError :
 		return -1
 
